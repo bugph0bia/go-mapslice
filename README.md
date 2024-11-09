@@ -4,6 +4,11 @@ Interconversion between map list and slice
 
 ## Input/Output Examples
 
+- Functions using generics.
+- Map keys and slice header elements must satisfy `cmp.Ordered`.
+- Map values and slice data elements must satisfy `comparable`.
+
+
 Map list (JSON-like)
 
 ```
