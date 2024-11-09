@@ -9,7 +9,7 @@ Interconversion between map list and slice
 - Map values and slice data elements must satisfy `comparable`.
 
 
-Map list (JSON-like)
+Map list (JSON list-like)
 
 ```
 [
