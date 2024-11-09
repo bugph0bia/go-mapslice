@@ -3,6 +3,8 @@ package mapslice
 
 import (
 	"cmp"
+	"encoding/json"
+	"io"
 	"maps"
 	"slices"
 )
@@ -17,6 +19,7 @@ import (
 // Order of the columns is such that the `fixedColumns` are placed first if they exist,
 // followed by the other keys sorted in ascending order. `fixColumns` accepts nil.
 func MaplistToTable[K cmp.Ordered, V comparable](maplist []map[K]V, fixedColumns []K) (tblheader []K, tbldata [][]V) {
+	// 入力チェック
 	if len(maplist) == 0 {
 		return
 	}
@@ -70,6 +73,7 @@ func MaplistToTable[K cmp.Ordered, V comparable](maplist []map[K]V, fixedColumns
 // If the size of the data row is larger than the size of the header, discard the value.
 // If `ignoreZero` is true, do not store zero values.
 func TableToMaplist[K cmp.Ordered, V comparable](tblheader []K, tbldata [][]V, ignoreZero bool) (maplist []map[K]V) {
+	// 入力チェック
 	if len(tblheader) == 0 || len(tbldata) == 0 {
 		return
 	}
@@ -97,6 +101,47 @@ func TableToMaplist[K cmp.Ordered, V comparable](tblheader []K, tbldata [][]V, i
 	}
 
 	return
+}
+
+// ReadJson : Read JSON format data to map list.
+func ReadJson[K comparable, V any](r io.Reader) ([]map[K]V, error) {
+	// JSONを全文読み込む
+	jsonBytes, err := io.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	// json.Unmarshal を使用するためにラップする
+	jsonBytes = slices.Concat([]byte(`{"body":`), jsonBytes, []byte("}"))
+
+	// オブジェクトに変換
+	var jsonObj struct {
+		Body []map[K]V `json:"body"`
+	}
+	if err = json.Unmarshal(jsonBytes, &jsonObj); err != nil {
+		return nil, err
+	}
+	return jsonObj.Body, nil
+}
+
+// WriteJson : Write JSON format data from map list.
+func WriteJson[K comparable, V any](w io.Writer, maplist []map[K]V) error {
+	// オブジェクトから変換
+	jsonObj := struct {
+		Body []map[K]V `json:"body"`
+	}{
+		Body: maplist,
+	}
+	jsonBytes, err := json.Marshal(&jsonObj)
+	if err != nil {
+		return err
+	}
+
+	// 前後の {"body": ... } を除去する
+	jsonBytes = jsonBytes[len(`{"body":`) : len(jsonBytes)-len("}")]
+
+	// JSONを出力
+	w.Write(jsonBytes)
+	return nil
 }
 
 // find : Find a element from the slice.

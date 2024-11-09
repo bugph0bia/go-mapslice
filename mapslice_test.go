@@ -1,6 +1,8 @@
 package mapslice
 
 import (
+	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -115,4 +117,58 @@ func TestTableToMaplist(t *testing.T) {
 	want = nil
 	act = TableToMaplist(inputh, inputd, false)
 	assert.Equal(t, want, act)
+}
+
+func TestReadJson(t *testing.T) {
+	json := `
+		[
+			{
+				"key1": 1,
+				"key2": 2,
+				"key3": 3
+			},
+			{
+				"key1": 4,
+				"key3": 5,
+				"key4": 6
+			}
+		]
+	`
+	r := strings.NewReader(json)
+	want := []map[string]int{
+		{
+			"key1": 1,
+			"key2": 2,
+			"key3": 3,
+		},
+		{
+			"key1": 4,
+			"key3": 5,
+			"key4": 6,
+		},
+	}
+	act, err := ReadJson[string, int](r)
+	assert.Equal(t, want, act)
+	assert.NoError(t, err)
+}
+
+func TestWriteJson(t *testing.T) {
+	w := new(bytes.Buffer)
+	input := []map[string]int{
+		{
+			"key1": 1,
+			"key2": 2,
+			"key3": 3,
+		},
+		{
+			"key1": 4,
+			"key3": 5,
+			"key4": 6,
+		},
+	}
+	want := `[{"key1":1,"key2":2,"key3":3},{"key1":4,"key3":5,"key4":6}]`
+	err := WriteJson(w, input)
+	act := w.String()
+	assert.Equal(t, want, act)
+	assert.NoError(t, err)
 }
