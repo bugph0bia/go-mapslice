@@ -1,6 +1,6 @@
 # go-mapslice
 
-Interconversion between map list and slice
+Interconversion between map list and table
 
 ## Input/Output Examples
 
@@ -19,7 +19,7 @@ Map list (JSON list-like)
 ]
 ```
 
-Slice (CSV-like)
+Table (CSV-like)
 
 ```
 [
@@ -31,7 +31,7 @@ Slice (CSV-like)
 
 ## Usage
 
-### Map list to slice
+### Map list to table
 
 ```go
 import "github.com/bugph0bia/go-mapslice"
@@ -51,11 +51,11 @@ func main() {
 		},
 	}
 
-	header, data := mapslice.MapToSlice(input, nil)
+	header, data := mapslice.MaplistToTable(input, nil)
 	// header = []string{"key1", "key2", "key3", "key4"}
 	// data   = [][]int{{1, 2, 3, 0}, {4, 0, 5, 6}}
 
-	header, data = mapslice.MapToSlice(input, []string{"key3"})
+	header, data = mapslice.MaplistToTable(input, []string{"key3"})
 	// header = []string{"key3", "key1", "key2", "key4"}
 	// data   = [][]int{{3, 1, 2, 0}, {5, 4, 0, 6}}
 }
@@ -64,7 +64,7 @@ func main() {
 - Empty elements has a zero value of type V.
 - Order of the columns is such that the `fixColumns` (second argument) are placed first if they exist, followed by the other keys sorted in ascending order. `fixColumns` accepts `nil`.
 
-### Slice to Map list
+### Table to Map list
 
 ```go
 import "github.com/bugph0bia/go-mapslice"
@@ -74,7 +74,7 @@ func main() {
 	header := []string{"key1", "key2", "key3", "key4"}
 	data := [][]int{{1, 2, 3, 0}, {4, 0, 5, 6}}
 
-	maplist := SliceToMap(header, data, false)
+	maplist := TableToMaplist(header, data, false)
 	// maplist = []map[string]int{
 	// 	{
 	// 		"key1": 1,
@@ -90,7 +90,7 @@ func main() {
 	// 	},
 	// }
 
-	maplist := SliceToMap(header, data, true)
+	maplist := TableToMaplist(header, data, true)
 	// maplist = []map[string]int{
 	// 	{
 	// 		"key1": 1,
