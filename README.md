@@ -139,6 +139,8 @@ func main() {
     }
     defer f.Close()
 
+    var maplist []map[string]int
+
     // Read as string key and int value
     maplist, err := ReadJson[string, int](f)
     if err != nil {
@@ -171,16 +173,16 @@ func main() {
         },
     }
 
-	f, err := os.Create("foo.json")
-	if err != nil {
+    f, err := os.Create("foo.json")
+    if err != nil {
         panic(err)
-	}
-	defer f.Close()
+    }
+    defer f.Close()
 
     // Generics type parameter can be omitted because the type is implicitly
     // determined by `maplist`.
-	err := WriteJson(f, maplist) // Meaning as: WriteJson[string, int](f, maplist)
-	if err != nil {
+    err := WriteJson(f, maplist) // Meaning as: WriteJson[string, int](f, maplist)
+    if err != nil {
         panic(err)
-	}
+    }
 ```
