@@ -56,11 +56,11 @@ func main() {
         },
     }
 
-    header, data := mapslice.MaplistToTable(input, nil)
+    header, data := mapslice.MaplistToTable(maplist, nil)
     // header = []string{"key1", "key2", "key3", "key4"}
     // data   = [][]int{{1, 2, 3, 0}, {4, 0, 5, 6}}
 
-    header, data = mapslice.MaplistToTable(input, []string{"key3"})
+    header, data = mapslice.MaplistToTable(maplist, []string{"key3"})
     // header = []string{"key3", "key1", "key2", "key4"}
     // data   = [][]int{{3, 1, 2, 0}, {5, 4, 0, 6}}
 }
@@ -146,6 +146,7 @@ func main() {
     if err != nil {
         panic(err)
     }
+}
 ```
 
 ### Write JSON String
@@ -185,4 +186,5 @@ func main() {
     if err != nil {
         panic(err)
     }
+}
 ```
